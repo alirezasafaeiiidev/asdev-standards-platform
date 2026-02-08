@@ -1,0 +1,8 @@
+# Local env
+.env.local
+
+# Generated reports
+sync/divergence-report.csv
+
+# Temporary files
+*.tmp

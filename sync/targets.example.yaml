@@ -1,0 +1,33 @@
+targets:
+  - repo: org/repository-a
+    default_branch: main
+    templates:
+      - pr-template
+      - issue-bug
+      - issue-feature
+      - contributing-minimum
+      - readme-minimum
+      - ci-quality-gate
+    optional_features:
+      - editorconfig-default
+    opt_outs: []
+    labels:
+      - asdev-sync
+
+  - repo: org/repository-b
+    default_branch: main
+    templates:
+      - pr-template
+      - issue-bug
+      - issue-feature
+      - contributing-minimum
+      - readme-minimum
+      - ci-quality-gate
+    optional_features:
+      - editorconfig-default
+      - codeowners-default
+    opt_outs:
+      - README.md
+    labels:
+      - asdev-sync
+      - standards

@@ -1,0 +1,48 @@
+templates:
+  - id: pr-template
+    version: 1.0.0
+    mode: must
+    source_ref: standards/coding/level-0.md
+    path: .github/pull_request_template.md
+
+  - id: issue-bug
+    version: 1.0.0
+    mode: must
+    source_ref: standards/coding/level-0.md
+    path: .github/ISSUE_TEMPLATE/bug_report.yml
+
+  - id: issue-feature
+    version: 1.0.0
+    mode: must
+    source_ref: standards/coding/level-0.md
+    path: .github/ISSUE_TEMPLATE/feature_request.yml
+
+  - id: contributing-minimum
+    version: 1.0.0
+    mode: must
+    source_ref: standards/coding/level-0.md
+    path: CONTRIBUTING.md
+
+  - id: readme-minimum
+    version: 1.0.0
+    mode: must
+    source_ref: standards/docs/readme-minimum.md
+    path: README.md
+
+  - id: ci-quality-gate
+    version: 1.0.0
+    mode: must
+    source_ref: standards/ci/minimal-github-actions.md
+    path: .github/workflows/asdev-quality-gate.yml
+
+  - id: editorconfig-default
+    version: 1.0.0
+    mode: optional
+    source_ref: standards/coding/level-0.md
+    path: .editorconfig
+
+  - id: codeowners-default
+    version: 1.0.0
+    mode: optional
+    source_ref: standards/coding/level-0.md
+    path: CODEOWNERS

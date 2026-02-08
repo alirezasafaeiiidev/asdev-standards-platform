@@ -1,0 +1,48 @@
+targets:
+  - repo: alirezasafaeiiidev/my_portfolio
+    default_branch: main
+    templates:
+      - pr-template
+      - issue-bug
+      - issue-feature
+      - contributing-minimum
+      - readme-minimum
+      - ci-quality-gate
+    optional_features:
+      - editorconfig-default
+    opt_outs: []
+    labels:
+      - asdev-sync
+
+  - repo: alirezasafaeiiidev/persian_tools
+    default_branch: main
+    templates:
+      - pr-template
+      - issue-bug
+      - issue-feature
+      - contributing-minimum
+      - readme-minimum
+      - ci-quality-gate
+    optional_features:
+      - editorconfig-default
+      - codeowners-default
+    opt_outs: []
+    labels:
+      - asdev-sync
+      - standards
+
+  - repo: alirezasafaeiiidev/patreon_iran
+    default_branch: main
+    templates:
+      - pr-template
+      - issue-bug
+      - issue-feature
+      - contributing-minimum
+      - readme-minimum
+      - ci-quality-gate
+    optional_features:
+      - editorconfig-default
+    opt_outs:
+      - README.md
+    labels:
+      - asdev-sync
