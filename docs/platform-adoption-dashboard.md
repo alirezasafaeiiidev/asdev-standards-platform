@@ -1,6 +1,6 @@
 # Platform Adoption Dashboard
 
-- Generated at: 2026-02-09T22:37:14Z
+- Generated at: 2026-02-09T22:49:52Z
 - Latest Weekly Governance Digest: https://github.com/alirezasafaeiiidev/asdev_platform/issues/2
 
 ## Level 0 Adoption (from divergence report)
@@ -50,6 +50,14 @@
 | Fingerprint | Previous | Current | Delta |
 |---|---:|---:|---:|
 | auth_or_access | 2 | 2 | 0 |
+
+## Fingerprint Delta History (Recent Runs)
+
+| Run | Fingerprint | Delta |
+|---|---|---:|
+| 20260209T224843Z | auth_or_access | 0 |
+| current | auth_or_access | 0 |
+| previous | auth_or_access | 0 |
 
 ## Combined Report Delta by Repo
 
