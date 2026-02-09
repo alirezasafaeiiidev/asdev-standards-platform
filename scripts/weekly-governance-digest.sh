@@ -30,8 +30,14 @@ require_cmd yq
 cd "$ROOT_DIR"
 
 if [[ "${SKIP_REPORT_REGEN:-false}" != "true" ]]; then
+  bash scripts/rotate-report-snapshots.sh
   bash platform/scripts/divergence-report.sh sync/targets.yaml platform/repo-templates/templates.yaml platform/repo-templates sync/divergence-report.csv
-  bash platform/scripts/divergence-report-combined.sh platform/repo-templates/templates.yaml platform/repo-templates sync/divergence-report.combined.csv
+  bash platform/scripts/divergence-report-combined.sh \
+    platform/repo-templates/templates.yaml \
+    platform/repo-templates \
+    sync/divergence-report.combined.csv \
+    "sync/targets*.yaml" \
+    sync/divergence-report.combined.errors.csv
   bash scripts/generate-dashboard.sh docs/platform-adoption-dashboard.md
 fi
 

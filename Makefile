@@ -17,6 +17,9 @@ lint:
 	@bash -n scripts/validate-target-template-ids.sh
 	@bash -n scripts/validate-template-version-policy.sh
 	@bash -n scripts/weekly-governance-digest.sh
+	@bash -n scripts/classify-divergence-error.sh
+	@bash -n scripts/retry-cmd.sh
+	@bash -n scripts/rotate-report-snapshots.sh
 	@echo "Lint checks passed."
 
 test:

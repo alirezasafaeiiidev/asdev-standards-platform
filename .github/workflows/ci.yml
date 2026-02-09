@@ -53,6 +53,9 @@ jobs:
           YQ_BIN="$(bash scripts/ensure-yq.sh)"
           echo "$(dirname "$YQ_BIN")" >> "$GITHUB_PATH"
 
+      - name: Rotate report snapshots
+        run: bash scripts/rotate-report-snapshots.sh
+
       - name: Generate combined divergence report
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -154,7 +157,7 @@ jobs:
         run: |
           pr_number="${{ steps.create_update_pr.outputs.pull-request-number }}"
           if [[ -z "$pr_number" || "$pr_number" == "null" ]]; then
-            pr_number="$(gh pr list --head chore/reports-docs-update --base main --json number --jq '.[0].number' || true)"
+            pr_number="$(bash scripts/retry-cmd.sh 3 2 -- gh pr list --head chore/reports-docs-update --base main --json number --jq '.[0].number' || true)"
           fi
           echo "pr_number=${pr_number}" >> "$GITHUB_OUTPUT"
 
@@ -163,11 +166,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mapfile -t open_prs < <(gh pr list --state open --head chore/reports-docs-update --base main --json number,updatedAt --jq 'sort_by(.updatedAt) | reverse | .[].number')
+          mapfile -t open_prs < <(bash scripts/retry-cmd.sh 3 2 -- gh pr list --state open --head chore/reports-docs-update --base main --json number,updatedAt --jq 'sort_by(.updatedAt) | reverse | .[].number')
           if [[ "${#open_prs[@]}" -gt 1 ]]; then
             keep="${open_prs[0]}"
             for pr in "${open_prs[@]:1}"; do
-              gh pr close "$pr" --comment "Superseded by #${keep}; keeping one active reports update PR."
+              bash scripts/retry-cmd.sh 3 2 -- gh pr close "$pr" --comment "Superseded by #${keep}; keeping one active reports update PR."
             done
           fi
 
@@ -198,7 +201,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pr_number="${{ steps.resolve_pr.outputs.pr_number }}"
-          mapfile -t changed_files < <(gh pr view "$pr_number" --json files --jq '.files[].path')
+          mapfile -t changed_files < <(bash scripts/retry-cmd.sh 3 2 -- gh pr view "$pr_number" --json files --jq '.files[].path')
           safe="true"
           for path in "${changed_files[@]}"; do
             if [[ "$path" != "docs/platform-adoption-dashboard.md" && "$path" != "sync/divergence-report.combined.csv" && "$path" != "sync/divergence-report.combined.errors.csv" ]]; then
@@ -213,7 +216,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr merge "${{ steps.resolve_pr.outputs.pr_number }}" --auto --squash --delete-branch
+          bash scripts/retry-cmd.sh 3 2 -- gh pr merge "${{ steps.resolve_pr.outputs.pr_number }}" --auto --squash --delete-branch
 
       - name: Report PR creation limitation
         if: steps.generated_changes.outputs.has_changes == 'true' && steps.create_update_pr.outcome == 'failure'

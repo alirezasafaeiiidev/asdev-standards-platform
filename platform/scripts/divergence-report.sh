@@ -29,6 +29,7 @@ require_cmd yq
 require_cmd git
 require_cmd timeout
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 RETRY_ATTEMPTS="${RETRY_ATTEMPTS:-3}"
 RETRY_BASE_DELAY="${RETRY_BASE_DELAY:-2}"
 CLONE_TIMEOUT_SECONDS="${CLONE_TIMEOUT_SECONDS:-30}"
@@ -92,30 +93,7 @@ clone_repo() {
 
 classify_clone_error() {
   local message="$1"
-  local normalized
-  normalized="$(tr '[:upper:]' '[:lower:]' <<< "$message")"
-
-  if grep -Eq 'gnutls_handshake|tls connection was non-properly terminated|unexpected eof' <<< "$normalized"; then
-    echo "tls_error"
-    return
-  fi
-
-  if grep -Eq 'requested url returned error: 502|502 bad gateway' <<< "$normalized"; then
-    echo "http_502"
-    return
-  fi
-
-  if grep -Eq 'timed out|timeout' <<< "$normalized"; then
-    echo "timeout"
-    return
-  fi
-
-  if grep -Eq 'could not read username|terminal prompts disabled|authentication failed|permission denied' <<< "$normalized"; then
-    echo "auth_or_access"
-    return
-  fi
-
-  echo "unknown_transient"
+  bash "${ROOT_DIR}/scripts/classify-divergence-error.sh" "$message"
 }
 
 TARGETS_FILE="$(resolve_path "$TARGETS_FILE")"
