@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUTPUT_FILE="${1:-docs/platform-adoption-dashboard.md}"
 NOW_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+LATEST_WEEKLY_DIGEST_URL="${LATEST_WEEKLY_DIGEST_URL:-}"
 
 cd "$ROOT_DIR"
 
@@ -18,7 +19,16 @@ cat > "$OUTPUT_FILE" <<HEADER
 # Platform Adoption Dashboard
 
 - Generated at: ${NOW_UTC}
+HEADER
 
+if [[ -n "$LATEST_WEEKLY_DIGEST_URL" ]]; then
+  {
+    echo "- Latest Weekly Governance Digest: ${LATEST_WEEKLY_DIGEST_URL}"
+    echo ""
+  } >> "$OUTPUT_FILE"
+fi
+
+cat >> "$OUTPUT_FILE" <<'HEADER'
 ## Level 0 Adoption (from divergence report)
 
 | Repository | Aligned | Diverged | Missing | Opted-out |

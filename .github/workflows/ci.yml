@@ -43,6 +43,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
+      issues: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -87,7 +88,24 @@ jobs:
             awk -F, 'NR>1{c[$3]++} END{for (k in c) print k","c[k]}' sync/divergence-report.combined.errors.csv | sort
           fi
 
+      - name: Generate error fingerprint trend
+        run: |
+          bash scripts/generate-error-fingerprint-trend.sh \
+            sync/divergence-report.combined.errors.previous.csv \
+            sync/divergence-report.combined.errors.csv \
+            sync/divergence-report.combined.errors.trend.csv
+
+      - name: Resolve latest weekly digest
+        id: latest_digest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          latest_digest_url="$(bash scripts/retry-cmd.sh 3 2 -- gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Weekly Governance Digest in:title" --limit 1 --json url --jq '.[0].url // empty' || true)"
+          echo "url=${latest_digest_url}" >> "$GITHUB_OUTPUT"
+
       - name: Generate dashboard
+        env:
+          LATEST_WEEKLY_DIGEST_URL: ${{ steps.latest_digest.outputs.url }}
         run: bash scripts/generate-dashboard.sh docs/platform-adoption-dashboard.md
 
       - name: Upload generated outputs
@@ -97,6 +115,7 @@ jobs:
           path: |
             sync/divergence-report.combined.csv
             sync/divergence-report.combined.errors.csv
+            sync/divergence-report.combined.errors.trend.csv
             docs/platform-adoption-dashboard.md
 
   open-update-pr:
@@ -121,7 +140,7 @@ jobs:
       - name: Detect generated changes
         id: generated_changes
         run: |
-          if git diff --quiet -- sync/divergence-report.combined.csv sync/divergence-report.combined.errors.csv docs/platform-adoption-dashboard.md; then
+          if git diff --quiet -- sync/divergence-report.combined.csv sync/divergence-report.combined.errors.csv sync/divergence-report.combined.errors.trend.csv docs/platform-adoption-dashboard.md; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "update_mode=skipped_no_changes" >> "$GITHUB_OUTPUT"
           else
@@ -143,6 +162,7 @@ jobs:
             Updated files:
             - `sync/divergence-report.combined.csv`
             - `sync/divergence-report.combined.errors.csv`
+            - `sync/divergence-report.combined.errors.trend.csv`
             - `docs/platform-adoption-dashboard.md`
           branch: "chore/reports-docs-update"
           base: main
@@ -204,7 +224,7 @@ jobs:
           mapfile -t changed_files < <(bash scripts/retry-cmd.sh 3 2 -- gh pr view "$pr_number" --json files --jq '.files[].path')
           safe="true"
           for path in "${changed_files[@]}"; do
-            if [[ "$path" != "docs/platform-adoption-dashboard.md" && "$path" != "sync/divergence-report.combined.csv" && "$path" != "sync/divergence-report.combined.errors.csv" ]]; then
+            if [[ "$path" != "docs/platform-adoption-dashboard.md" && "$path" != "sync/divergence-report.combined.csv" && "$path" != "sync/divergence-report.combined.errors.csv" && "$path" != "sync/divergence-report.combined.errors.trend.csv" ]]; then
               safe="false"
               echo "::warning::Auto-merge blocked due to non-allowed file: $path"
             fi
@@ -234,4 +254,6 @@ jobs:
             echo "- pr_number: ${{ steps.resolve_pr.outputs.pr_number || 'n/a' }}"
             echo "- create_pr_outcome: ${{ steps.create_update_pr.outcome || 'n/a' }}"
             echo "- auto_merge_safe: ${{ steps.guard_auto_merge.outputs.safe || 'n/a' }}"
+            echo "- fingerprint_trend_artifact: sync/divergence-report.combined.errors.trend.csv"
+            echo "- latest_weekly_digest_url: ${{ steps.latest_digest.outputs.url || 'n/a' }}"
           } >> "$GITHUB_STEP_SUMMARY"

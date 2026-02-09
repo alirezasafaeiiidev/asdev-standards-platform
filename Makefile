@@ -20,6 +20,8 @@ lint:
 	@bash -n scripts/classify-divergence-error.sh
 	@bash -n scripts/retry-cmd.sh
 	@bash -n scripts/rotate-report-snapshots.sh
+	@bash -n scripts/generate-error-fingerprint-trend.sh
+	@bash -n scripts/close-stale-weekly-digests.sh
 	@echo "Lint checks passed."
 
 test:

@@ -110,4 +110,14 @@ else
   echo "Created weekly digest issue: ${TITLE}"
 fi
 
+current_issue_number="$(gh issue list --repo alirezasafaeiiidev/asdev_platform --state open --search "${TITLE} in:title" --json number --jq '.[0].number // empty')"
+current_issue_url="$(gh issue list --repo alirezasafaeiiidev/asdev_platform --state open --search "${TITLE} in:title" --json url --jq '.[0].url // empty')"
+if [[ -n "$current_issue_number" && -n "$current_issue_url" ]]; then
+  bash scripts/close-stale-weekly-digests.sh \
+    "alirezasafaeiiidev/asdev_platform" \
+    "$current_issue_number" \
+    "$current_issue_url" \
+    "Weekly Governance Digest"
+fi
+
 rm -f "$body_file" "$actions_file"

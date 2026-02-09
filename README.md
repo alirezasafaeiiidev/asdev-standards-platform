@@ -56,13 +56,15 @@ bash scripts/generate-dashboard.sh docs/platform-adoption-dashboard.md
 - On `push` to `main`, CI regenerates:
   - `sync/divergence-report.combined.csv`
   - `sync/divergence-report.combined.errors.csv`
+  - `sync/divergence-report.combined.errors.trend.csv`
   - rotates previous snapshots for both combined reports before regeneration
   - `docs/platform-adoption-dashboard.md`
 - A weekly scheduled run (Mondays 09:00 UTC) regenerates the same outputs.
 - If generated outputs change, CI opens or updates an automated PR.
 - For automation PRs, CI enables auto-merge only when changed files are limited to dashboard/report output files.
 - If the combined report contains `clone_failed`, CI publishes a warning with the affected repositories.
-- CI also publishes transient error fingerprint counts (for example `tls_error`, `http_502`, `timeout`) in logs and dashboard trend sections.
+- CI also publishes transient error fingerprint counts (for example `tls_error`, `http_502`, `timeout`) in logs, produces a compact fingerprint trend CSV artifact, and includes latest weekly digest URL in dashboard when available.
+- Weekly digest automation closes stale open digest issues beyond SLA (`DIGEST_STALE_DAYS`, default `8`) and references the active digest issue.
 
 ## Phase B Deliverables
 
