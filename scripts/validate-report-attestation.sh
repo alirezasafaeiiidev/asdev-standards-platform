@@ -5,6 +5,7 @@ COMBINED_FILE="${1:-sync/divergence-report.combined.csv}"
 ERRORS_FILE="${2:-sync/divergence-report.combined.errors.csv}"
 TREND_FILE="${3:-sync/divergence-report.combined.errors.trend.csv}"
 ATTESTATION_FILE="${4:-sync/generated-reports.attestation}"
+ATTESTATION_MAX_AGE_SECONDS="${ATTESTATION_MAX_AGE_SECONDS:-1800}"
 
 for file in "$COMBINED_FILE" "$ERRORS_FILE" "$TREND_FILE"; do
   if [[ ! -f "$file" ]]; then
@@ -33,6 +34,20 @@ require_key "trend_file"
 require_key "combined_sha256"
 require_key "errors_sha256"
 require_key "trend_sha256"
+
+to_epoch() {
+  local ts="$1"
+  date -u -d "$ts" +%s 2>/dev/null || date -u -jf "%Y-%m-%dT%H:%M:%SZ" "$ts" +%s
+}
+
+validated_at="$(grep '^validated_at=' "$ATTESTATION_FILE" | cut -d= -f2-)"
+validated_epoch="$(to_epoch "$validated_at")"
+now_epoch="$(date -u +%s)"
+age_seconds="$((now_epoch - validated_epoch))"
+if [[ "$age_seconds" -gt "$ATTESTATION_MAX_AGE_SECONDS" ]]; then
+  echo "Attestation is stale: age_seconds=${age_seconds}, max_allowed=${ATTESTATION_MAX_AGE_SECONDS}" >&2
+  exit 1
+fi
 
 attested_combined="$(grep '^combined_sha256=' "$ATTESTATION_FILE" | cut -d= -f2-)"
 attested_errors="$(grep '^errors_sha256=' "$ATTESTATION_FILE" | cut -d= -f2-)"

@@ -26,6 +26,7 @@ lint:
 	@bash -n scripts/summarize-error-fingerprint-trend.sh
 	@bash -n scripts/write-report-attestation.sh
 	@bash -n scripts/validate-report-attestation.sh
+	@bash -n scripts/close-stale-report-update-prs.sh
 	@echo "Lint checks passed."
 
 test:

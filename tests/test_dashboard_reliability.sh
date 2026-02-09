@@ -125,4 +125,29 @@ grep -q "| 20260209T100000Z | tls_error | 2 |" "${OUTPUT_FILE}" || {
   exit 1
 }
 
+grep -q "## Top Fingerprint Deltas (Current Run)" "${OUTPUT_FILE}" || {
+  echo "Missing top fingerprint deltas section" >&2
+  exit 1
+}
+
+grep -q "### Top Positive Deltas" "${OUTPUT_FILE}" || {
+  echo "Missing top positive deltas section" >&2
+  exit 1
+}
+
+grep -q "| tls_error | 2 |" "${OUTPUT_FILE}" || {
+  echo "Missing expected positive delta row" >&2
+  exit 1
+}
+
+grep -q "### Top Negative Deltas" "${OUTPUT_FILE}" || {
+  echo "Missing top negative deltas section" >&2
+  exit 1
+}
+
+grep -q "| timeout | -1 |" "${OUTPUT_FILE}" || {
+  echo "Missing expected negative delta row" >&2
+  exit 1
+}
+
 echo "dashboard reliability checks passed."

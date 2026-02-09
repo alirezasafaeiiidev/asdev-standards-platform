@@ -7,6 +7,7 @@ NOW_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 LATEST_WEEKLY_DIGEST_URL="${LATEST_WEEKLY_DIGEST_URL:-}"
 FINGERPRINT_HISTORY_LIMIT="${FINGERPRINT_HISTORY_LIMIT:-3}"
 FINGERPRINT_HISTORY_ROW_LIMIT="${FINGERPRINT_HISTORY_ROW_LIMIT:-40}"
+FINGERPRINT_TOP_DELTA_LIMIT="${FINGERPRINT_TOP_DELTA_LIMIT:-5}"
 
 cd "$ROOT_DIR"
 
@@ -193,6 +194,46 @@ SECTION
   fi
 
   trend_current="sync/divergence-report.combined.errors.trend.csv"
+  if [[ -f "$trend_current" ]]; then
+    cat >> "$OUTPUT_FILE" <<SECTION
+
+## Top Fingerprint Deltas (Current Run)
+
+### Top Positive Deltas
+
+| Fingerprint | Delta |
+|---|---:|
+SECTION
+
+    mapfile -t top_positive_rows < <(awk -F, 'NR>1 && ($4+0)>0 {print $1 "," $4}' "$trend_current" | sort -t, -k2,2nr | head -n "$FINGERPRINT_TOP_DELTA_LIMIT")
+    if [[ "${#top_positive_rows[@]}" -eq 0 ]]; then
+      echo "| none | 0 |" >> "$OUTPUT_FILE"
+    else
+      for row in "${top_positive_rows[@]}"; do
+        IFS=',' read -r fp delta <<< "$row"
+        echo "| ${fp} | ${delta} |" >> "$OUTPUT_FILE"
+      done
+    fi
+
+    cat >> "$OUTPUT_FILE" <<SECTION
+
+### Top Negative Deltas
+
+| Fingerprint | Delta |
+|---|---:|
+SECTION
+
+    mapfile -t top_negative_rows < <(awk -F, 'NR>1 && ($4+0)<0 {print $1 "," $4}' "$trend_current" | sort -t, -k2,2n | head -n "$FINGERPRINT_TOP_DELTA_LIMIT")
+    if [[ "${#top_negative_rows[@]}" -eq 0 ]]; then
+      echo "| none | 0 |" >> "$OUTPUT_FILE"
+    else
+      for row in "${top_negative_rows[@]}"; do
+        IFS=',' read -r fp delta <<< "$row"
+        echo "| ${fp} | ${delta} |" >> "$OUTPUT_FILE"
+      done
+    fi
+  fi
+
   trend_previous="sync/divergence-report.combined.errors.trend.previous.csv"
   if [[ -f "$trend_current" || -f "$trend_previous" ]]; then
     cat >> "$OUTPUT_FILE" <<SECTION

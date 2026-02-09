@@ -170,6 +170,8 @@ jobs:
           fi
 
       - name: Validate report attestation presence
+        env:
+          ATTESTATION_MAX_AGE_SECONDS: "1800"
         run: |
           bash scripts/validate-report-attestation.sh \
             sync/divergence-report.combined.csv \
@@ -216,18 +218,12 @@ jobs:
           fi
           echo "pr_number=${pr_number}" >> "$GITHUB_OUTPUT"
 
-      - name: Enforce single active update PR
+      - name: Enforce update PR lifecycle policy
         if: steps.generated_changes.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mapfile -t open_prs < <(bash scripts/retry-cmd.sh 3 2 -- gh pr list --state open --head chore/reports-docs-update --base main --json number,updatedAt --jq 'sort_by(.updatedAt) | reverse | .[].number')
-          if [[ "${#open_prs[@]}" -gt 1 ]]; then
-            keep="${open_prs[0]}"
-            for pr in "${open_prs[@]:1}"; do
-              bash scripts/retry-cmd.sh 3 2 -- gh pr close "$pr" --comment "Superseded by #${keep}; keeping one active reports update PR."
-            done
-          fi
+          bash scripts/close-stale-report-update-prs.sh "$GITHUB_REPOSITORY" "chore/reports-docs-update"
 
       - name: Report update PR mode
         if: steps.generated_changes.outputs.has_changes == 'true'

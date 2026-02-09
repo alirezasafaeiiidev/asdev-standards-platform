@@ -50,4 +50,36 @@ grep -q 'Attestation hash mismatch for trend report' "${WORK_DIR}/err.log" || {
   exit 1
 }
 
+(
+  cd "$ROOT_DIR"
+  bash scripts/write-report-attestation.sh "$combined" "$errors" "$trend" "$attestation"
+)
+
+tmp_attestation="${WORK_DIR}/attestation-stale.txt"
+awk '
+  BEGIN{changed=0}
+  /^validated_at=/{print "validated_at=2020-01-01T00:00:00Z"; changed=1; next}
+  {print}
+  END{if(changed==0) exit 1}
+' "$attestation" > "$tmp_attestation"
+mv "$tmp_attestation" "$attestation"
+
+set +e
+(
+  cd "$ROOT_DIR"
+  ATTESTATION_MAX_AGE_SECONDS=60 bash scripts/validate-report-attestation.sh "$combined" "$errors" "$trend" "$attestation"
+) >"${WORK_DIR}/stale.out" 2>"${WORK_DIR}/stale.err"
+stale_status=$?
+set -e
+
+if [[ "$stale_status" -eq 0 ]]; then
+  echo "Expected attestation freshness validation failure" >&2
+  exit 1
+fi
+
+grep -q 'Attestation is stale' "${WORK_DIR}/stale.err" || {
+  echo "Missing attestation stale error" >&2
+  exit 1
+}
+
 echo "report attestation checks passed."
