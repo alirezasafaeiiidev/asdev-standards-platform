@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DATE_TAG="$(date -u +%Y-%m-%d)"
 TITLE="Weekly Governance Digest ${DATE_TAG}"
+DIGEST_OWNER="${DIGEST_OWNER:-@alirezasafaeiiidev}"
+DIGEST_REVIEW_SLA="${DIGEST_REVIEW_SLA:-24h from issue update}"
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || {
@@ -44,10 +46,25 @@ opted_prev="$(count_status "$prev_file" opted_out)"
 opted_now="$(count_status "$curr_file" opted_out)"
 
 body_file="$(mktemp)"
+actions_file="$(mktemp)"
+
+gh issue list \
+  --repo alirezasafaeiiidev/asdev_platform \
+  --state open \
+  --limit 100 \
+  --json number,title,url \
+  --jq '.[] | select(.title | test("^(ops|automation|performance|observability|test|reliability):")) | "- [ ] [#\(.number)](\(.url)) \(.title)"' > "$actions_file"
+
+if [[ ! -s "$actions_file" ]]; then
+  echo "- [ ] none" > "$actions_file"
+fi
+
 cat > "$body_file" <<BODY
 ## Weekly Governance Digest
 
 - Date: ${DATE_TAG}
+- Owner: ${DIGEST_OWNER}
+- Review SLA: ${DIGEST_REVIEW_SLA}
 - Dashboard: \
   docs/platform-adoption-dashboard.md
 - Combined report: \
@@ -64,6 +81,16 @@ cat > "$body_file" <<BODY
 
 - Review divergence rows with non-aligned status.
 - Confirm rollout readiness for next language wave.
+
+### Ownership Checklist
+
+- [ ] Owner reviewed weekly deltas and status changes.
+- [ ] Owner triaged clone_failed and non-aligned hotspots.
+- [ ] Owner linked/update follow-up issues for this week.
+
+### Linked Operational Issues
+
+$(cat "$actions_file")
 BODY
 
 existing="$(gh issue list --repo alirezasafaeiiidev/asdev_platform --state open --search "${TITLE} in:title" --json number --jq '.[0].number // empty')"
@@ -75,4 +102,4 @@ else
   echo "Created weekly digest issue: ${TITLE}"
 fi
 
-rm -f "$body_file"
+rm -f "$body_file" "$actions_file"

@@ -113,6 +113,7 @@ jobs:
         run: |
           if git diff --quiet -- sync/divergence-report.combined.csv docs/platform-adoption-dashboard.md; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "update_mode=skipped_no_changes" >> "$GITHUB_OUTPUT"
           else
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
@@ -148,6 +149,39 @@ jobs:
             pr_number="$(gh pr list --head chore/reports-docs-update --base main --json number --jq '.[0].number' || true)"
           fi
           echo "pr_number=${pr_number}" >> "$GITHUB_OUTPUT"
+
+      - name: Enforce single active update PR
+        if: steps.generated_changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mapfile -t open_prs < <(gh pr list --state open --head chore/reports-docs-update --base main --json number,updatedAt --jq 'sort_by(.updatedAt) | reverse | .[].number')
+          if [[ "${#open_prs[@]}" -gt 1 ]]; then
+            keep="${open_prs[0]}"
+            for pr in "${open_prs[@]:1}"; do
+              gh pr close "$pr" --comment "Superseded by #${keep}; keeping one active reports update PR."
+            done
+          fi
+
+      - name: Report update PR mode
+        if: steps.generated_changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          operation="${{ steps.create_update_pr.outputs.pull-request-operation }}"
+          pr_number="${{ steps.resolve_pr.outputs.pr_number }}"
+          if [[ -z "$operation" || "$operation" == "null" ]]; then
+            operation="updated_or_existing"
+          fi
+          echo "update_mode=${operation}"
+          if [[ -n "$pr_number" ]]; then
+            echo "update_pr=#${pr_number}"
+          fi
+
+      - name: Report skipped update mode
+        if: steps.generated_changes.outputs.has_changes != 'true'
+        run: |
+          echo "update_mode=skipped_no_changes"
 
       - name: Guard auto-merge files
         if: steps.generated_changes.outputs.has_changes == 'true' && steps.resolve_pr.outputs.pr_number != ''
