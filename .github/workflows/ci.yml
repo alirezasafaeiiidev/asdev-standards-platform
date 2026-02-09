@@ -220,10 +220,15 @@ jobs:
 
       - name: Enforce update PR lifecycle policy
         if: steps.generated_changes.outputs.has_changes == 'true'
+        id: lifecycle_policy
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT_UPDATE_PR_STALE_DRY_RUN: ${{ vars.REPORT_UPDATE_PR_STALE_DRY_RUN || 'false' }}
         run: |
+          summary_file="$(mktemp)"
+          REPORT_UPDATE_PR_SUMMARY_FILE="$summary_file" \
           bash scripts/close-stale-report-update-prs.sh "$GITHUB_REPOSITORY" "chore/reports-docs-update"
+          cat "$summary_file" >> "$GITHUB_OUTPUT"
 
       - name: Report update PR mode
         if: steps.generated_changes.outputs.has_changes == 'true'
@@ -285,6 +290,11 @@ jobs:
             echo "- pr_number: ${{ steps.resolve_pr.outputs.pr_number || 'n/a' }}"
             echo "- create_pr_outcome: ${{ steps.create_update_pr.outcome || 'n/a' }}"
             echo "- auto_merge_safe: ${{ steps.guard_auto_merge.outputs.safe || 'n/a' }}"
+            echo "- update_pr_lifecycle_dry_run: ${{ steps.lifecycle_policy.outputs.dry_run_enabled || 'false' }}"
+            echo "- lifecycle_closed_superseded: ${{ steps.lifecycle_policy.outputs.closed_superseded || '0' }}"
+            echo "- lifecycle_closed_stale: ${{ steps.lifecycle_policy.outputs.closed_stale || '0' }}"
+            echo "- lifecycle_dry_run_candidates_superseded: ${{ steps.lifecycle_policy.outputs.dry_run_candidates_superseded || '0' }}"
+            echo "- lifecycle_dry_run_candidates_stale: ${{ steps.lifecycle_policy.outputs.dry_run_candidates_stale || '0' }}"
             echo "- fingerprint_trend_artifact: sync/divergence-report.combined.errors.trend.csv"
             echo "- report_attestation: sync/generated-reports.attestation"
             echo "- latest_weekly_digest_url: ${{ steps.latest_digest.outputs.url || 'n/a' }}"

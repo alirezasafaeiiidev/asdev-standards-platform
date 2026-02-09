@@ -67,11 +67,14 @@ bash scripts/generate-dashboard.sh docs/platform-adoption-dashboard.md
 - CI validates generated CSV schemas before report artifacts are uploaded and before downstream update PR automation proceeds.
 - CI writes and validates a report attestation (`sync/generated-reports.attestation`) so update PR automation is gated on validated artifacts.
 - Attestation validation also enforces freshness (`ATTESTATION_MAX_AGE_SECONDS`, default `1800`) to prevent stale reuse.
+- Attestation includes explicit `schema_version` and validator compatibility checks (`ATTESTATION_EXPECTED_SCHEMA_VERSION`, default `1`).
 - Weekly digest automation closes stale open digest issues beyond SLA (`DIGEST_STALE_DAYS`, default `8`) and references the active digest issue; dry-run preview is available via `DIGEST_STALE_DRY_RUN=true`.
 - Snapshot rotation archives report snapshots under `sync/snapshots/` and prunes by retention (`REPORT_SNAPSHOT_RETENTION_DAYS`, default `14`).
 - Dashboard includes recent fingerprint delta history from current/previous trend files and retained snapshot trend files.
 - Dashboard also highlights top positive/negative fingerprint deltas from current trend output.
+- Dashboard includes per-run `clone_failed` trend from current/previous and retained combined snapshots.
 - Update PR lifecycle automation closes superseded/stale `chore/reports-docs-update` PRs while keeping only the newest active PR.
+- Update PR lifecycle supports dry-run mode (`REPORT_UPDATE_PR_STALE_DRY_RUN=true`) and emits candidate/closure counts into workflow summary.
 
 ## Phase B Deliverables
 

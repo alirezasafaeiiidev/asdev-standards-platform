@@ -8,6 +8,7 @@ LATEST_WEEKLY_DIGEST_URL="${LATEST_WEEKLY_DIGEST_URL:-}"
 FINGERPRINT_HISTORY_LIMIT="${FINGERPRINT_HISTORY_LIMIT:-3}"
 FINGERPRINT_HISTORY_ROW_LIMIT="${FINGERPRINT_HISTORY_ROW_LIMIT:-40}"
 FINGERPRINT_TOP_DELTA_LIMIT="${FINGERPRINT_TOP_DELTA_LIMIT:-5}"
+CLONE_FAILED_HISTORY_LIMIT="${CLONE_FAILED_HISTORY_LIMIT:-5}"
 
 cd "$ROOT_DIR"
 
@@ -116,6 +117,34 @@ SECTION
 |---|---:|---:|---:|
 | clone_failed rows | ${clone_prev} | ${clone_curr} | ${clone_delta} |
 SECTION
+
+  cat >> "$OUTPUT_FILE" <<SECTION
+
+### clone_failed Trend by Run
+
+| Run | clone_failed rows |
+|---|---:|
+SECTION
+
+  clone_failed_history_tmp="$(mktemp)"
+  : > "$clone_failed_history_tmp"
+  echo "current,${clone_curr}" >> "$clone_failed_history_tmp"
+  echo "previous,${clone_prev}" >> "$clone_failed_history_tmp"
+  if [[ -d "sync/snapshots" ]]; then
+    mapfile -t combined_history_files < <(find sync/snapshots -maxdepth 1 -type f -name 'divergence-report.combined.[0-9]*T[0-9]*Z.csv' | sort | tail -n "$CLONE_FAILED_HISTORY_LIMIT")
+    for file in "${combined_history_files[@]}"; do
+      run_tag="$(basename "$file" | sed -E 's/^divergence-report\.combined\.([0-9TZ]+)\.csv$/\1/')"
+      run_clone_failed="$(count_combined_status "$file" "clone_failed")"
+      echo "${run_tag},${run_clone_failed}" >> "$clone_failed_history_tmp"
+    done
+  fi
+
+  if [[ -s "$clone_failed_history_tmp" ]]; then
+    awk -F, '{printf "| %s | %s |\n", $1, $2}' "$clone_failed_history_tmp" | sort -u | head -n "$((CLONE_FAILED_HISTORY_LIMIT + 2))" >> "$OUTPUT_FILE"
+  else
+    echo "| n/a | 0 |" >> "$OUTPUT_FILE"
+  fi
+  rm -f "$clone_failed_history_tmp"
 
   cat >> "$OUTPUT_FILE" <<SECTION
 

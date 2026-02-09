@@ -6,6 +6,7 @@ ERRORS_FILE="${2:-sync/divergence-report.combined.errors.csv}"
 TREND_FILE="${3:-sync/divergence-report.combined.errors.trend.csv}"
 ATTESTATION_FILE="${4:-sync/generated-reports.attestation}"
 ATTESTATION_MAX_AGE_SECONDS="${ATTESTATION_MAX_AGE_SECONDS:-1800}"
+ATTESTATION_EXPECTED_SCHEMA_VERSION="${ATTESTATION_EXPECTED_SCHEMA_VERSION:-1}"
 
 for file in "$COMBINED_FILE" "$ERRORS_FILE" "$TREND_FILE"; do
   if [[ ! -f "$file" ]]; then
@@ -27,6 +28,7 @@ require_key() {
   fi
 }
 
+require_key "schema_version"
 require_key "validated_at"
 require_key "combined_file"
 require_key "errors_file"
@@ -34,6 +36,12 @@ require_key "trend_file"
 require_key "combined_sha256"
 require_key "errors_sha256"
 require_key "trend_sha256"
+
+schema_version="$(grep '^schema_version=' "$ATTESTATION_FILE" | cut -d= -f2-)"
+if [[ "$schema_version" != "$ATTESTATION_EXPECTED_SCHEMA_VERSION" ]]; then
+  echo "Unsupported attestation schema_version=${schema_version}; expected=${ATTESTATION_EXPECTED_SCHEMA_VERSION}" >&2
+  exit 1
+fi
 
 to_epoch() {
   local ts="$1"

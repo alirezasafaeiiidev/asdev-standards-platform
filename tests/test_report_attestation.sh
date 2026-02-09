@@ -82,4 +82,27 @@ grep -q 'Attestation is stale' "${WORK_DIR}/stale.err" || {
   exit 1
 }
 
+(
+  cd "$ROOT_DIR"
+  ATTESTATION_SCHEMA_VERSION=2 bash scripts/write-report-attestation.sh "$combined" "$errors" "$trend" "$attestation"
+)
+
+set +e
+(
+  cd "$ROOT_DIR"
+  ATTESTATION_EXPECTED_SCHEMA_VERSION=1 bash scripts/validate-report-attestation.sh "$combined" "$errors" "$trend" "$attestation"
+) >"${WORK_DIR}/schema.out" 2>"${WORK_DIR}/schema.err"
+schema_status=$?
+set -e
+
+if [[ "$schema_status" -eq 0 ]]; then
+  echo "Expected schema version compatibility failure" >&2
+  exit 1
+fi
+
+grep -q 'Unsupported attestation schema_version' "${WORK_DIR}/schema.err" || {
+  echo "Missing schema version mismatch error" >&2
+  exit 1
+}
+
 echo "report attestation checks passed."

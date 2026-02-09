@@ -77,6 +77,11 @@ cat > "${SYNC_DIR}/snapshots/divergence-report.combined.errors.trend.20260209T10
 error_fingerprint,previous,current,delta
 tls_error,0,2,2
 CSV
+cat > "${SYNC_DIR}/snapshots/divergence-report.combined.20260209T100000Z.csv" <<'CSV'
+target_file,repo,template_id,expected_version,detected_version,mode,source_ref,status,last_checked_at
+targets.yaml,example/repo-a,pr-template,1.0.0,missing,required,ref,clone_failed,2026-02-09T10:00:00Z
+targets.yaml,example/repo-b,pr-template,1.0.0,missing,required,ref,clone_failed,2026-02-09T10:00:00Z
+CSV
 
 bash "${ROOT_DIR}/scripts/generate-dashboard.sh" "${OUTPUT_FILE}"
 
@@ -147,6 +152,26 @@ grep -q "### Top Negative Deltas" "${OUTPUT_FILE}" || {
 
 grep -q "| timeout | -1 |" "${OUTPUT_FILE}" || {
   echo "Missing expected negative delta row" >&2
+  exit 1
+}
+
+grep -q "### clone_failed Trend by Run" "${OUTPUT_FILE}" || {
+  echo "Missing clone_failed trend by run section" >&2
+  exit 1
+}
+
+grep -q "| current | 3 |" "${OUTPUT_FILE}" || {
+  echo "Missing current clone_failed trend row" >&2
+  exit 1
+}
+
+grep -q "| previous | 1 |" "${OUTPUT_FILE}" || {
+  echo "Missing previous clone_failed trend row" >&2
+  exit 1
+}
+
+grep -q "| 20260209T100000Z | 2 |" "${OUTPUT_FILE}" || {
+  echo "Missing snapshot clone_failed trend row" >&2
   exit 1
 }
 
