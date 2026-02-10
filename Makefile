@@ -12,6 +12,7 @@ lint:
 	@bash -n platform/scripts/sync.sh
 	@bash -n platform/scripts/divergence-report.sh
 	@bash -n platform/scripts/divergence-report-combined.sh
+	@python3 -m py_compile platform/scripts/generate-agent-md.py
 	@bash -n scripts/monthly-release.sh
 	@bash -n scripts/generate-dashboard.sh
 	@bash -n scripts/validate-target-template-ids.sh

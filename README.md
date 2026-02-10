@@ -16,6 +16,11 @@ Core process contracts:
 - Definition of Done policy: `governance/policies/definition-of-done.md`
 - CI expectations policy: `governance/policies/ci-expectations.md`
 - Security checklist policy: `governance/policies/security-checklist.md`
+- Agent rollout template pack:
+  - `platform/agent/AGENT_TEMPLATE.md`
+  - `platform/agent/HUMAN_GATES.md`
+  - `platform/agent/REPO_LENSES.md`
+  - `platform/scripts/generate-agent-md.py`
 
 This repository does not own consumer-repo business logic.
 
