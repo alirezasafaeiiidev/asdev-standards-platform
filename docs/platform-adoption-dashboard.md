@@ -1,34 +1,29 @@
 # Platform Adoption Dashboard
 
-- Generated at: 2026-02-10T01:43:02Z
-- Latest Weekly Governance Digest: https://github.com/alirezasafaeiiidev/asdev_platform/issues/2
-
+- Generated at: 2026-02-10T13:48:58Z
 ## Level 0 Adoption (from divergence report)
 
 | Repository | Aligned | Diverged | Missing | Opted-out |
 |---|---:|---:|---:|---:|
-| alirezasafaeiiidev/my_portfolio | 7 | 0 | 0 | 0 |
-| alirezasafaeiiidev/patreon_iran | 6 | 0 | 0 | 1 |
-| alirezasafaeiiidev/persian_tools | 8 | 0 | 0 | 0 |
 
 ## Level 0 Trend (Current vs Previous Snapshot)
 
 | Status | Previous | Current | Delta |
 |---|---:|---:|---:|
-| aligned | 21 | 21 | 0 |
+| aligned | 1 | 0 | -1 |
 | diverged | 0 | 0 | 0 |
 | missing | 0 | 0 | 0 |
-| opted_out | 1 | 1 | 0 |
+| opted_out | 0 | 0 | 0 |
 
 ## Combined Report Trend (Current vs Previous Snapshot)
 
 | Status | Previous | Current | Delta |
 |---|---:|---:|---:|
-| aligned | 23 | 23 | 0 |
+| aligned | 23 | 0 | -23 |
 | diverged | 0 | 0 | 0 |
-| missing | 2 | 2 | 0 |
-| opted_out | 1 | 1 | 0 |
-| clone_failed | 2 | 2 | 0 |
+| missing | 2 | 0 | -2 |
+| opted_out | 1 | 0 | -1 |
+| clone_failed | 2 | 0 | -2 |
 | unknown_template | 0 | 0 | 0 |
 | unknown | 0 | 0 | 0 |
 
@@ -36,21 +31,23 @@
 
 | Metric | Previous | Current | Delta |
 |---|---:|---:|---:|
-| clone_failed rows | 2 | 2 | 0 |
+| clone_failed rows | 2 | 0 | -2 |
 
 ### clone_failed Trend by Run
 
 | Run | clone_failed rows |
 |---|---:|
-| 20260210T014159Z | 2 |
-| current | 2 |
+| 20260209T100000Z | 2 |
+| 20260210T134011Z | 2 |
+| current | 0 |
 | previous | 2 |
 
 ### unknown_template Trend by Run
 
 | Run | unknown_template rows |
 |---|---:|
-| 20260210T014159Z | 0 |
+| 20260209T100000Z | 1 |
+| 20260210T134011Z | 0 |
 | current | 0 |
 | previous | 0 |
 
@@ -58,14 +55,14 @@
 
 | Repository | Previous | Current | Delta |
 |---|---:|---:|---:|
-| alirezasafaeiiidev/go-level1-pilot | 1 | 1 | 0 |
-| alirezasafaeiiidev/python-level1-pilot | 1 | 1 | 0 |
+| alirezasafaeiiidev/go-level1-pilot | 1 | 0 | -1 |
+| alirezasafaeiiidev/python-level1-pilot | 1 | 0 | -1 |
 
 ## Transient Error Fingerprints (Combined)
 
 | Fingerprint | Previous | Current | Delta |
 |---|---:|---:|---:|
-| auth_or_access | 2 | 2 | 0 |
+| auth_or_access | 2 | 0 | -2 |
 
 ## Top Fingerprint Deltas (Current Run)
 
@@ -79,41 +76,50 @@
 
 | Fingerprint | Delta |
 |---|---:|
-| none | 0 |
+| auth_or_access | -2 |
 
 ## Fingerprint Delta History (Recent Runs)
 
 | Run | Fingerprint | Delta |
 |---|---|---:|
-| 20260210T014159Z | auth_or_access | 0 |
-| current | auth_or_access | 0 |
-| previous | auth_or_access | 0 |
+| 20260209T100000Z | auth_or_access | 3 |
+| 20260209T100000Z | timeout | 5 |
+| 20260209T100000Z | tls_error | 2 |
+| 20260210T134011Z | auth_or_access | 3 |
+| 20260210T134011Z | timeout | -1 |
+| 20260210T134011Z | tls_error | 2 |
+| current | auth_or_access | -2 |
+| previous | auth_or_access | 3 |
+| previous | timeout | -1 |
+| previous | tls_error | 2 |
 
 ## auth_or_access Trend by Run
 
 | Run | auth_or_access count |
 |---|---:|
-| 20260210T014159Z | 2 |
-| current | 2 |
-| previous | 2 |
+| 20260209T100000Z | 3 |
+| 20260210T134011Z | 4 |
+| current | 0 |
+| previous | 4 |
 
 ## timeout Trend by Run
 
 | Run | timeout count |
 |---|---:|
-| 20260210T014159Z | 0 |
+| 20260209T100000Z | 5 |
+| 20260210T134011Z | 1 |
 | current | 0 |
-| previous | 0 |
+| previous | 1 |
 
 ## Combined Report Delta by Repo
 
 | Repository | Previous Non-aligned | Current Non-aligned | Delta |
 |---|---:|---:|---:|
-| alirezasafaeiiidev/go-level1-pilot | 1 | 1 | 0 |
-| alirezasafaeiiidev/my_portfolio | 1 | 1 | 0 |
-| alirezasafaeiiidev/patreon_iran | 1 | 1 | 0 |
-| alirezasafaeiiidev/persian_tools | 1 | 1 | 0 |
-| alirezasafaeiiidev/python-level1-pilot | 1 | 1 | 0 |
+| alirezasafaeiiidev/go-level1-pilot | 1 | 0 | -1 |
+| alirezasafaeiiidev/my_portfolio | 1 | 0 | -1 |
+| alirezasafaeiiidev/patreon_iran | 1 | 0 | -1 |
+| alirezasafaeiiidev/persian_tools | 1 | 0 | -1 |
+| alirezasafaeiiidev/python-level1-pilot | 1 | 0 | -1 |
 
 ## Level 1 Rollout Targets
 
