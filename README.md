@@ -101,11 +101,22 @@ bash scripts/generate-dashboard.sh docs/platform-adoption-dashboard.md
 gh auth status
 make digest-cleanup-dry-run
 make ci-last-run
+make ci-last-run-json
 ```
 
 - `make digest-cleanup-dry-run` resolves the latest open weekly digest and runs stale lifecycle cleanup in dry-run mode.
 - `make digest-cleanup-dry-run REPO=<owner/repo>` runs the same helper against another repository.
 - `make ci-last-run` prints the latest CI run status summary (`workflow`, `run id`, `status`, `conclusion`).
+- `make ci-last-run-json` prints machine-readable latest CI run status.
+
+## Quick Operational Commands
+
+```bash
+make ci
+make reports
+make ci-last-run
+make digest-cleanup-dry-run
+```
 
 ## Phase B Deliverables
 

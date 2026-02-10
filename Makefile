@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: setup lint test run ci reports digest-cleanup-dry-run ci-last-run
+.PHONY: setup lint test run ci reports digest-cleanup-dry-run ci-last-run ci-last-run-json
 
 setup:
 	@command -v git >/dev/null || (echo "git is required" && exit 1)
@@ -64,11 +64,19 @@ digest-cleanup-dry-run:
 
 ci-last-run:
 	@repo="$${REPO:-alirezasafaeiiidev/asdev_platform}"; \
-	if ! command -v gh >/dev/null 2>&1; then \
+	if [[ "$${GH_FORCE_MISSING:-false}" == "true" ]] || ! command -v gh >/dev/null 2>&1; then \
 		echo "gh CLI is required for ci-last-run"; \
 		exit 0; \
 	fi; \
-	gh run list --repo "$$repo" --limit 1 --json workflowName,databaseId,status,conclusion,displayTitle --jq '.[0] | "\(.workflowName) id=\(.databaseId) status=\(.status) conclusion=\(.conclusion // \"n/a\") title=\(.displayTitle)"'
+	gh run list --repo "$$repo" --limit 1 --json workflowName,databaseId,status,conclusion,displayTitle --jq '.[0] | [.workflowName, .databaseId, .status, (.conclusion // "n/a"), .displayTitle] | @tsv'
+
+ci-last-run-json:
+	@repo="$${REPO:-alirezasafaeiiidev/asdev_platform}"; \
+	if [[ "$${GH_FORCE_MISSING:-false}" == "true" ]] || ! command -v gh >/dev/null 2>&1; then \
+		echo "{}"; \
+		exit 0; \
+	fi; \
+	gh run list --repo "$$repo" --limit 1 --json databaseId,status,conclusion,headSha --jq '.[0] // {}'
 
 run:
 	@echo "ASDEV Platform is a standards/governance repository; use scripts under platform/scripts/."

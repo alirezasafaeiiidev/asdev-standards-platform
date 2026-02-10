@@ -31,5 +31,6 @@ bash tests/test_digest_stale_cleanup_workflow.sh
 bash tests/test_make_digest_cleanup_dry_run_target.sh
 bash tests/test_make_digest_cleanup_no_open_digest.sh
 bash tests/test_make_ci_last_run_target.sh
+bash tests/test_make_ci_last_run_fallback.sh
 
 echo "Script checks passed."
