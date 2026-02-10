@@ -98,10 +98,14 @@ bash scripts/generate-dashboard.sh docs/platform-adoption-dashboard.md
 ## Local Operations
 
 ```bash
+gh auth status
 make digest-cleanup-dry-run
+make ci-last-run
 ```
 
 - `make digest-cleanup-dry-run` resolves the latest open weekly digest and runs stale lifecycle cleanup in dry-run mode.
+- `make digest-cleanup-dry-run REPO=<owner/repo>` runs the same helper against another repository.
+- `make ci-last-run` prints the latest CI run status summary (`workflow`, `run id`, `status`, `conclusion`).
 
 ## Phase B Deliverables
 

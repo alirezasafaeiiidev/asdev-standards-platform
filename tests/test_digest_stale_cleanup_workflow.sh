@@ -74,4 +74,14 @@ grep -q '\- dry_run_enabled: ' "${WORKFLOW_FILE}" || {
   exit 1
 }
 
+grep -q '\- skipped: true' "${WORKFLOW_FILE}" || {
+  echo "Missing skipped summary metric" >&2
+  exit 1
+}
+
+grep -q '\- reason: no_open_digest' "${WORKFLOW_FILE}" || {
+  echo "Missing skipped reason summary metric" >&2
+  exit 1
+}
+
 echo "digest stale cleanup workflow checks passed."

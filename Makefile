@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: setup lint test run ci reports digest-cleanup-dry-run
+.PHONY: setup lint test run ci reports digest-cleanup-dry-run ci-last-run
 
 setup:
 	@command -v git >/dev/null || (echo "git is required" && exit 1)
@@ -61,6 +61,14 @@ digest-cleanup-dry-run:
 	DIGEST_STALE_DRY_RUN=true DIGEST_STALE_SUMMARY_FILE="$$summary_file" bash scripts/close-stale-weekly-digests.sh "$$repo" "$$latest_number" "$$latest_url" "Weekly Governance Digest"; \
 	cat "$$summary_file"; \
 	rm -f "$$summary_file"
+
+ci-last-run:
+	@repo="$${REPO:-alirezasafaeiiidev/asdev_platform}"; \
+	if ! command -v gh >/dev/null 2>&1; then \
+		echo "gh CLI is required for ci-last-run"; \
+		exit 0; \
+	fi; \
+	gh run list --repo "$$repo" --limit 1 --json workflowName,databaseId,status,conclusion,displayTitle --jq '.[0] | "\(.workflowName) id=\(.databaseId) status=\(.status) conclusion=\(.conclusion // \"n/a\") title=\(.displayTitle)"'
 
 run:
 	@echo "ASDEV Platform is a standards/governance repository; use scripts under platform/scripts/."
