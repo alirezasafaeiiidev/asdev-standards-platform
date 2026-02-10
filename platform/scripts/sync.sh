@@ -26,7 +26,8 @@ require_cmd() {
 }
 
 require_cmd git
-require_cmd gh
+GH_BIN="${GH_BIN:-gh}"
+require_cmd "$GH_BIN"
 YQ_BIN="$("${ROOT_DIR}/scripts/ensure-yq.sh")"
 PATH="$(dirname "$YQ_BIN"):$PATH"
 require_cmd yq
@@ -161,7 +162,7 @@ for ((i=0; i<count_targets; i++)); do
 
   echo "Processing: $repo"
 
-  if ! retry_cmd "$RETRY_ATTEMPTS" gh repo clone "$repo" "$repo_dir" -- -q; then
+  if ! retry_cmd "$RETRY_ATTEMPTS" "$GH_BIN" repo clone "$repo" "$repo_dir" -- -q; then
     echo "Failed to clone $repo"
     ((failed+=1))
     continue
@@ -238,7 +239,7 @@ for ((i=0; i<count_targets; i++)); do
   done
 
   pr_created="false"
-  if retry_cmd "$RETRY_ATTEMPTS" gh pr create \
+  if retry_cmd "$RETRY_ATTEMPTS" "$GH_BIN" pr create \
     --title "chore: ASDEV Level 0 sync" \
     --body-file "$pr_body_file" \
     --base "$default_branch" \
@@ -246,7 +247,7 @@ for ((i=0; i<count_targets; i++)); do
     pr_created="true"
   elif [[ "${#labels_args[@]}" -gt 0 ]]; then
     echo "PR create with labels failed for $repo. Retrying without labels..."
-    if retry_cmd "$RETRY_ATTEMPTS" gh pr create \
+    if retry_cmd "$RETRY_ATTEMPTS" "$GH_BIN" pr create \
       --title "chore: ASDEV Level 0 sync" \
       --body-file "$pr_body_file" \
       --base "$default_branch" >/dev/null; then

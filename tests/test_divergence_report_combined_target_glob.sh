@@ -68,6 +68,7 @@ YAML
   cd "${WORK_DIR}"
   export FAKE_GH_ROOT
   PATH="${FAKE_BIN}:$(dirname "${YQ_BIN}"):${PATH}" \
+  GH_BIN="${FAKE_BIN}/gh" \
   bash "${ROOT_DIR}/platform/scripts/divergence-report-combined.sh" \
     "${ROOT_DIR}/platform/repo-templates/templates.yaml" \
     "${ROOT_DIR}/platform/repo-templates" \
