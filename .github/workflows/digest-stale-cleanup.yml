@@ -1,0 +1,55 @@
+name: Weekly Digest Stale Cleanup
+
+on:
+  schedule:
+    - cron: '15 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    if: ${{ vars.DIGEST_CLEANUP_ENABLED != 'false' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve latest open digest
+        id: latest_digest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          latest_number="$(bash scripts/retry-cmd.sh 3 2 -- gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Weekly Governance Digest in:title" --limit 1 --json number --jq '.[0].number // empty' || true)"
+          latest_url="$(bash scripts/retry-cmd.sh 3 2 -- gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Weekly Governance Digest in:title" --limit 1 --json url --jq '.[0].url // empty' || true)"
+          echo "number=${latest_number}" >> "$GITHUB_OUTPUT"
+          echo "url=${latest_url}" >> "$GITHUB_OUTPUT"
+
+      - name: Close stale weekly digests
+        if: steps.latest_digest.outputs.number != '' && steps.latest_digest.outputs.url != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DIGEST_STALE_DRY_RUN: ${{ vars.DIGEST_STALE_DRY_RUN || 'true' }}
+          DIGEST_STALE_DAYS: ${{ vars.DIGEST_STALE_DAYS || '8' }}
+        run: |
+          summary_file="$(mktemp)"
+          DIGEST_STALE_SUMMARY_FILE="$summary_file" \
+          bash scripts/close-stale-weekly-digests.sh \
+            "$GITHUB_REPOSITORY" \
+            "${{ steps.latest_digest.outputs.number }}" \
+            "${{ steps.latest_digest.outputs.url }}" \
+            "Weekly Governance Digest"
+
+          {
+            echo "## Daily Weekly Digest Stale Cleanup"
+            echo ""
+            cat "$summary_file"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report skipped cleanup
+        if: steps.latest_digest.outputs.number == '' || steps.latest_digest.outputs.url == ''
+        run: |
+          {
+            echo "## Daily Weekly Digest Stale Cleanup"
+            echo ""
+            echo "- No open weekly digest issue found; cleanup skipped."
+          } >> "$GITHUB_STEP_SUMMARY"

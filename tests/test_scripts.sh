@@ -26,5 +26,7 @@ bash tests/test_summarize_clone_failed.sh
 bash tests/test_ci_workflow_contract.sh
 bash tests/test_status_counter_contract.sh
 bash tests/test_clone_failed_summary_contract.sh
+bash tests/test_reports_attestation_contract.sh
+bash tests/test_digest_stale_cleanup_workflow.sh
 
 echo "Script checks passed."

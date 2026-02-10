@@ -7,6 +7,7 @@ TITLE="Weekly Governance Digest ${DATE_TAG}"
 DIGEST_OWNER="${DIGEST_OWNER:-@alirezasafaeiiidev}"
 DIGEST_REVIEW_SLA="${DIGEST_REVIEW_SLA:-24h from issue update}"
 DIGEST_CLONE_FAILED_LIMIT="${DIGEST_CLONE_FAILED_LIMIT:-5}"
+DIGEST_COMBINED_FILE="${DIGEST_COMBINED_FILE:-sync/divergence-report.combined.csv}"
 source "${ROOT_DIR}/scripts/csv-utils.sh"
 
 require_cmd() {
@@ -66,7 +67,7 @@ if [[ ! -s "$actions_file" ]]; then
   echo "- [ ] none" > "$actions_file"
 fi
 
-combined_file="sync/divergence-report.combined.csv"
+combined_file="${DIGEST_COMBINED_FILE}"
 if [[ -f "$combined_file" ]]; then
   status_idx="$(csv_col_idx "$combined_file" "status")"
   repo_idx="$(csv_col_idx "$combined_file" "repo")"
