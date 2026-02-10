@@ -58,6 +58,7 @@ OUTPUT_CSV="${WORK_DIR}/sync/divergence-report.csv"
   cd "${WORK_DIR}"
   export FAKE_GH_ROOT
   PATH="${FAKE_BIN}:$(dirname "${YQ_BIN}"):${PATH}" \
+  GH_BIN="${FAKE_BIN}/gh" \
   bash "${ROOT_DIR}/platform/scripts/divergence-report.sh" \
     sync/targets-test.yaml \
     "${ROOT_DIR}/platform/repo-templates/templates.yaml" \

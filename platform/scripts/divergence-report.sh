@@ -27,8 +27,9 @@ require_cmd() {
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 YQ_BIN="$("${ROOT_DIR}/scripts/ensure-yq.sh")"
 PATH="$(dirname "$YQ_BIN"):$PATH"
+GH_BIN="${GH_BIN:-gh}"
 
-require_cmd gh
+require_cmd "$GH_BIN"
 require_cmd yq
 require_cmd git
 require_cmd timeout
@@ -77,7 +78,7 @@ clone_repo() {
   local gh_error_output=""
   local git_error_output=""
 
-  if retry_cmd "$RETRY_ATTEMPTS" timeout "$CLONE_TIMEOUT_SECONDS" gh repo clone "$repo" "$repo_dir" -- -q; then
+  if retry_cmd "$RETRY_ATTEMPTS" timeout "$CLONE_TIMEOUT_SECONDS" "$GH_BIN" repo clone "$repo" "$repo_dir" -- -q; then
     return 0
   else
     gh_error_output="${last_retry_output:-}"

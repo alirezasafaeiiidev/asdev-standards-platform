@@ -77,6 +77,7 @@ OUTPUT_FILE="${WORK_DIR}/sync.out"
   cd "${WORK_DIR}"
   export FAKE_GH_ROOT
   PATH="${FAKE_BIN}:$(dirname "${YQ_BIN}"):${PATH}" \
+  GH_BIN="${FAKE_BIN}/gh" \
   bash "${ROOT_DIR}/platform/scripts/sync.sh" \
     sync/targets-test.yaml \
     "${ROOT_DIR}/platform/repo-templates/templates.yaml" \
