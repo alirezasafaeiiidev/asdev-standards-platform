@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
-import tempfile
 from pathlib import Path
 
 OWNER_DEFAULT = "alirezasafaeiiidev"
@@ -224,6 +222,37 @@ def merge_commands(make_cmds: dict, script_cmds: dict, stack: str):
     return merged
 
 
+def evaluate_agents_md(repo_dir: Path):
+    agents_path = repo_dir / "AGENTS.md"
+    if not agents_path.exists():
+        return {
+            "status": "missing",
+            "recommendation": "Add AGENTS.md compatibility pointer to AGENT.md if your tooling reads AGENTS.md.",
+        }
+
+    content = agents_path.read_text(encoding="utf-8", errors="ignore")
+    lower = content.lower()
+    references_agent_md = "agent.md" in lower
+    has_runtime_contract = "codex runtime guidance" in lower or "human approval gates" in lower
+
+    if references_agent_md and (has_runtime_contract or "compatibility notice" in lower):
+        return {
+            "status": "compatible",
+            "recommendation": "No action required.",
+        }
+
+    if references_agent_md:
+        return {
+            "status": "review-needed",
+            "recommendation": "AGENTS.md references AGENT.md but should be reviewed for runtime guidance completeness.",
+        }
+
+    return {
+        "status": "review-needed",
+        "recommendation": "AGENTS.md exists but does not reference AGENT.md; consider adding a compatibility pointer.",
+    }
+
+
 def process_repo(owner: str, repo: str, workdir: Path, apply: bool):
     repo_dir, err = clone_repo(owner, repo, workdir)
     if err:
@@ -238,6 +267,7 @@ def process_repo(owner: str, repo: str, workdir: Path, apply: bool):
     _, script_cmds = read_package_commands(repo_dir)
     commands = merge_commands(make_cmds, script_cmds, stack)
     workflows = workflow_list(repo_dir)
+    agents_md_eval = evaluate_agents_md(repo_dir)
 
     content = build_agent_md(repo, stack, commands, workflows)
     out = repo_dir / "AGENT.md"
@@ -253,6 +283,8 @@ def process_repo(owner: str, repo: str, workdir: Path, apply: bool):
         "stack": stack,
         "workflows": workflows,
         "missing": missing,
+        "agents_md_status": agents_md_eval["status"],
+        "agents_md_recommendation": agents_md_eval["recommendation"],
         "applied": apply,
     }
 
