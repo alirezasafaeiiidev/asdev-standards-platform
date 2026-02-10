@@ -56,3 +56,4 @@ Always pause for explicit approval before:
 - `platform/agent/AGENT_TEMPLATE.md`
 - `platform/agent/HUMAN_GATES.md`
 - `platform/agent/REPO_LENSES.md`
+- `docs/resource-policy.md`

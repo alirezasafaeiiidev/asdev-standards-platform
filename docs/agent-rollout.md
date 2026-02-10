@@ -65,6 +65,14 @@ Repository validation:
 - Run each repository's discovered lint/test/build commands from generated output.
 - If commands are placeholders or missing, report explicit gaps in PR notes.
 
+Execution resource defaults:
+
+- Clone/fetch parallelism: `3`
+- Concurrent heavy jobs: `2`
+- Worker cap per heavy job: `6`
+- E2E browser workers: `1`
+- GPU disabled unless tool explicitly supports it.
+
 ## Approval Gates
 
 Never bypass human approval for:

@@ -21,6 +21,7 @@ Core process contracts:
   - `platform/agent/HUMAN_GATES.md`
   - `platform/agent/REPO_LENSES.md`
   - `platform/scripts/generate-agent-md.py`
+- Resource execution policy: `docs/resource-policy.md`
 
 This repository does not own consumer-repo business logic.
 
