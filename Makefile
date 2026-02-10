@@ -15,6 +15,7 @@ lint:
 	@bash -n scripts/monthly-release.sh
 	@bash -n scripts/generate-dashboard.sh
 	@bash -n scripts/validate-target-template-ids.sh
+	@bash -n scripts/sanitize-public-reports.sh
 	@bash -n scripts/validate-template-version-policy.sh
 	@bash -n scripts/weekly-governance-digest.sh
 	@bash -n scripts/classify-divergence-error.sh

@@ -12,6 +12,20 @@ This repository defines:
 
 This repository does not own consumer-repo business logic.
 
+## Public Scope
+
+- This repository is intended to be public as the standards/governance source of truth.
+- Consumer application repositories can remain private/public independently.
+- Current private pilot retained by policy: `python-level1-pilot`.
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE`.
+
+## Security
+
+Please report vulnerabilities through the process in `SECURITY.md`.
+
 ## Repository Layout
 
 ```text
@@ -112,6 +126,12 @@ make ci-last-run-compact
 - `make ci-last-run-compact` prints a compact single line (`run id<TAB>conclusion`).
 - `scripts/weekly-governance-digest.sh` supports `DIGEST_REPO` override (defaults to `$GITHUB_REPOSITORY` in CI).
 - `scripts/monthly-release.sh` supports `RELEASE_REPO` and `BASE_BRANCH` overrides for reusable rollout automation.
+
+## Public Data Policy
+
+- Report CSVs and dashboard are kept in-repo for transparency.
+- Public sanitize policy removes owner prefixes from `repo` fields in tracked report CSV snapshots.
+- Use `bash scripts/sanitize-public-reports.sh sync` before public release snapshots.
 
 Example shell automation:
 

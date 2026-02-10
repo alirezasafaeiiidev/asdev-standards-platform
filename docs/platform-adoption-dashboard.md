@@ -1,28 +1,31 @@
 # Platform Adoption Dashboard
 
-- Generated at: 2026-02-10T13:48:58Z
+- Generated at: 2026-02-10T14:12:56Z
 ## Level 0 Adoption (from divergence report)
 
 | Repository | Aligned | Diverged | Missing | Opted-out |
 |---|---:|---:|---:|---:|
+| my_portfolio | 7 | 0 | 0 | 0 |
+| patreon_iran | 6 | 0 | 0 | 1 |
+| persian_tools | 8 | 0 | 0 | 0 |
 
 ## Level 0 Trend (Current vs Previous Snapshot)
 
 | Status | Previous | Current | Delta |
 |---|---:|---:|---:|
-| aligned | 1 | 0 | -1 |
+| aligned | 1 | 21 | 20 |
 | diverged | 0 | 0 | 0 |
 | missing | 0 | 0 | 0 |
-| opted_out | 0 | 0 | 0 |
+| opted_out | 0 | 1 | 1 |
 
 ## Combined Report Trend (Current vs Previous Snapshot)
 
 | Status | Previous | Current | Delta |
 |---|---:|---:|---:|
-| aligned | 23 | 0 | -23 |
+| aligned | 23 | 27 | 4 |
 | diverged | 0 | 0 | 0 |
 | missing | 2 | 0 | -2 |
-| opted_out | 1 | 0 | -1 |
+| opted_out | 1 | 1 | 0 |
 | clone_failed | 2 | 0 | -2 |
 | unknown_template | 0 | 0 | 0 |
 | unknown | 0 | 0 | 0 |
@@ -55,8 +58,8 @@
 
 | Repository | Previous | Current | Delta |
 |---|---:|---:|---:|
-| alirezasafaeiiidev/go-level1-pilot | 1 | 0 | -1 |
-| alirezasafaeiiidev/python-level1-pilot | 1 | 0 | -1 |
+| go-level1-pilot | 1 | 0 | -1 |
+| python-level1-pilot | 1 | 0 | -1 |
 
 ## Transient Error Fingerprints (Combined)
 
@@ -115,11 +118,11 @@
 
 | Repository | Previous Non-aligned | Current Non-aligned | Delta |
 |---|---:|---:|---:|
-| alirezasafaeiiidev/go-level1-pilot | 1 | 0 | -1 |
-| alirezasafaeiiidev/my_portfolio | 1 | 0 | -1 |
-| alirezasafaeiiidev/patreon_iran | 1 | 0 | -1 |
-| alirezasafaeiiidev/persian_tools | 1 | 0 | -1 |
-| alirezasafaeiiidev/python-level1-pilot | 1 | 0 | -1 |
+| go-level1-pilot | 1 | 0 | -1 |
+| my_portfolio | 1 | 0 | -1 |
+| patreon_iran | 1 | 1 | 0 |
+| persian_tools | 1 | 0 | -1 |
+| python-level1-pilot | 1 | 0 | -1 |
 
 ## Level 1 Rollout Targets
 
