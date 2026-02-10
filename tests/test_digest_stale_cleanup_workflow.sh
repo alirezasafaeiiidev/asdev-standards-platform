@@ -54,4 +54,24 @@ grep -q "## Daily Weekly Digest Stale Cleanup" "${WORKFLOW_FILE}" || {
   exit 1
 }
 
+grep -q '\- evaluated_count: ' "${WORKFLOW_FILE}" || {
+  echo "Missing normalized evaluated_count summary metric" >&2
+  exit 1
+}
+
+grep -q '\- closed_count: ' "${WORKFLOW_FILE}" || {
+  echo "Missing normalized closed_count summary metric" >&2
+  exit 1
+}
+
+grep -q '\- dry_run_candidates: ' "${WORKFLOW_FILE}" || {
+  echo "Missing normalized dry_run_candidates summary metric" >&2
+  exit 1
+}
+
+grep -q '\- dry_run_enabled: ' "${WORKFLOW_FILE}" || {
+  echo "Missing normalized dry_run_enabled summary metric" >&2
+  exit 1
+}
+
 echo "digest stale cleanup workflow checks passed."

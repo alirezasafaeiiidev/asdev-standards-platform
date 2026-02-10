@@ -42,7 +42,10 @@ jobs:
           {
             echo "## Daily Weekly Digest Stale Cleanup"
             echo ""
-            cat "$summary_file"
+            while IFS='=' read -r key value; do
+              [[ -n "$key" ]] || continue
+              echo "- ${key}: ${value}"
+            done < "$summary_file"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Report skipped cleanup
@@ -51,5 +54,10 @@ jobs:
           {
             echo "## Daily Weekly Digest Stale Cleanup"
             echo ""
-            echo "- No open weekly digest issue found; cleanup skipped."
+            echo "- evaluated_count: 0"
+            echo "- closed_count: 0"
+            echo "- dry_run_candidates: 0"
+            echo "- dry_run_enabled: ${{ vars.DIGEST_STALE_DRY_RUN || 'true' }}"
+            echo "- skipped: true"
+            echo "- reason: no_open_digest"
           } >> "$GITHUB_STEP_SUMMARY"

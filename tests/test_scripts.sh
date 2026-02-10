@@ -29,5 +29,6 @@ bash tests/test_clone_failed_summary_contract.sh
 bash tests/test_reports_attestation_contract.sh
 bash tests/test_digest_stale_cleanup_workflow.sh
 bash tests/test_make_digest_cleanup_dry_run_target.sh
+bash tests/test_make_digest_cleanup_no_open_digest.sh
 
 echo "Script checks passed."

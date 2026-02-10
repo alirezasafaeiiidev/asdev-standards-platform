@@ -80,6 +80,10 @@ bash scripts/generate-dashboard.sh docs/platform-adoption-dashboard.md
   - `DIGEST_STALE_DRY_RUN` (`true` for preview, `false` to enforce closures)
   - `DIGEST_STALE_DAYS` (stale threshold in days, default `8`)
 - Recommended rollout: run cleanup in dry-run mode first, review summary metrics, then switch to enforce mode.
+- Dry-run to enforce promotion checklist:
+  - `DIGEST_STALE_DRY_RUN=true` and run scheduled/dispatch cleanup.
+  - Confirm summary metrics (`evaluated_count`, `dry_run_candidates`) are expected.
+  - Switch to `DIGEST_STALE_DRY_RUN=false` only after review.
 - Snapshot rotation archives report snapshots under `sync/snapshots/` and prunes by retention (`REPORT_SNAPSHOT_RETENTION_DAYS`, default `14`).
 - Dashboard includes recent fingerprint delta history from current/previous trend files and retained snapshot trend files.
 - Dashboard also highlights top positive/negative fingerprint deltas from current trend output.
