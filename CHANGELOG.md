@@ -24,6 +24,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new template IDs:
   - `agents-runtime-guidance`
   - `codex-automation-spec`
+- Added brand attribution standard and rollout assets:
+  - `standards/branding/brand-attribution-v1.md`
+  - `platform/repo-templates/brand/v1/README.md`
+  - `platform/repo-templates/brand/v1/src/lib/brand.ts`
+  - `platform/repo-templates/brand/v1/src/components/brand/BrandFooter.tsx`
+  - `platform/repo-templates/brand/v1/src/components/brand/BrandLink.tsx`
+  - `docs/brand-rollout.md`
+- Added brand template IDs in `platform/repo-templates/templates.yaml`:
+  - `brand-v1-lib`
+  - `brand-v1-footer`
+  - `brand-v1-link`
 
 ### Changed
 - Updated `README.md` quickstart and automation verification guidance to include new acceptance-gate commands.
@@ -31,3 +42,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added execution status report for technical_execution_docs_v2 rollout:
   - `docs/technical-execution-v2-status-2026-02-13.md`
 - Updated `README.md` with Technical Execution v2 references and rollout PR pointers.
+- Updated `sync/targets.yaml` labels for brand rollout tracking.
