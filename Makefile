@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: setup lint test run ci reports digest-cleanup-dry-run ci-last-run ci-last-run-json ci-last-run-compact agent-generate hygiene verify-hub
+.PHONY: setup lint typecheck test e2e build coverage security-audit verify run ci reports digest-cleanup-dry-run ci-last-run ci-last-run-json ci-last-run-compact agent-generate hygiene verify-hub
 
 setup:
 	@command -v git >/dev/null || (echo "git is required" && exit 1)
@@ -35,13 +35,46 @@ lint:
 	@bash -n scripts/csv-utils.sh
 	@bash -n scripts/normalize-report-output.sh
 	@bash -n scripts/detect-meaningful-report-delta.sh
+	@bash -n scripts/typecheck.sh
+	@bash -n scripts/build-check.sh
+	@bash -n scripts/security-audit.sh
+	@bash -n scripts/check-coverage-threshold.sh
+	@bash -n scripts/run-task.sh
 	@bash -n scripts/repo-hygiene.sh
 	@bash scripts/repo-hygiene.sh check
 	@echo "Lint checks passed."
 
+typecheck:
+	@bash scripts/typecheck.sh
+
 test:
 	@YQ_BIN="$$(bash scripts/ensure-yq.sh)" && PATH="$$(dirname "$$YQ_BIN"):$$PATH" bash scripts/validate-target-template-ids.sh
 	@bash tests/test_scripts.sh
+
+e2e:
+	@if [[ -x scripts/run-e2e.sh ]]; then \
+		bash scripts/run-e2e.sh; \
+	else \
+		echo "No E2E suite configured; skipping e2e."; \
+	fi
+
+build:
+	@bash scripts/build-check.sh
+
+coverage:
+	@bash scripts/check-coverage-threshold.sh
+
+security-audit:
+	@bash scripts/security-audit.sh
+
+verify:
+	@bash scripts/run-task.sh verify.lint -- make lint
+	@bash scripts/run-task.sh verify.typecheck -- make typecheck
+	@bash scripts/run-task.sh verify.test -- make test
+	@bash scripts/run-task.sh verify.e2e -- make e2e
+	@bash scripts/run-task.sh verify.build -- make build
+	@bash scripts/run-task.sh verify.security-audit -- make security-audit
+	@bash scripts/run-task.sh verify.coverage -- make coverage
 
 ci:
 	@$(MAKE) lint

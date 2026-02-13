@@ -41,6 +41,10 @@ bash tests/test_make_ci_last_run_compact_target.sh
 bash tests/test_make_ci_last_run_compact_fallback.sh
 bash tests/test_make_hygiene_target.sh
 bash tests/test_make_verify_hub_target.sh
+bash tests/test_make_verify_target.sh
+bash tests/test_run_task_logging.sh
+bash tests/test_security_audit.sh
+bash tests/test_coverage_threshold.sh
 bash tests/test_repo_hygiene.sh
 bash scripts/validate-agent-pack.sh
 

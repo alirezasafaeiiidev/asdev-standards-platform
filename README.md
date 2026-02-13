@@ -58,8 +58,14 @@ asdev_platform/
 ```bash
 make setup
 make lint
+make typecheck
 make ci
 make test
+make e2e
+make build
+make security-audit
+make coverage
+make verify
 make reports
 make run
 make hygiene
@@ -68,7 +74,13 @@ make verify-hub
 
 `make test` always runs the full test suite and does not skip `yq`-dependent checks.
 `make ci` mirrors CI gating order locally: lint -> policy check -> test.
+`make verify` runs deterministic acceptance gates with task-level logs under `logs/{task-id}.log`.
 `make reports` runs the local report pipeline: combined report -> trend -> dashboard -> schema checks -> attestation write/validate.
+
+Automation acceptance contract:
+
+- Spec: `CODEX_AUTOMATION_SPEC.md`
+- Criteria mapping: `docs/automation-compliance.md`
 
 ## Reporting
 
